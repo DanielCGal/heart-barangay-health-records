@@ -1,0 +1,440 @@
+============================================================
+  BARANGAY MEDICAL HEALTH DATABASE — COMPLETE FIELD LIST
+  Gov. Paciano Bangoy Barangay Health Center
+============================================================
+  Generated from: mockData.ts, auth.service.ts, and all
+  component interfaces in the HEART prototype.
+
+  Last updated: Reflects UI changes applied to
+  PatientEditModal.tsx and PatientRegistration.tsx —
+  including new validations, new `cancer` field, format
+  enforcement on vitals, and TT dropdown format.
+============================================================
+
+
+════════════════════════════════════════════════════════════
+  TABLE 1: patients
+  (Core patient profile — one row per patient)
+════════════════════════════════════════════════════════════
+
+  IDENTIFIER
+  ──────────
+  id                        INTEGER        Primary key, auto-increment
+
+  PERSONAL INFORMATION
+  ────────────────────
+  lastName                  VARCHAR        e.g. "del Rosario"
+  firstName                 VARCHAR        e.g. "Juniel"
+  middleInitial             VARCHAR(2)     e.g. "B"
+  age                       INTEGER        Age in years
+  ageMonths                 INTEGER        Additional months (for infants)
+  sex                       VARCHAR        "Male" | "Female"
+
+  birthday                  DATE           Format: YYYY-MM-DD
+                                           ⚠ UI validates via native date
+                                           picker — stores "1993-03-15",
+                                           NOT "March 15, 1993"
+
+  religion                  VARCHAR        e.g. "Roman Catholic", "Islam"
+  civilStatus               VARCHAR        "Single" | "Married" |
+                                           "Widowed" | "Separated"
+
+  contactNumber             VARCHAR(11)    ⚠ Digits ONLY, exactly 11
+                                           characters (e.g. "09172345678").
+                                           UI strips non-numeric input
+                                           and enforces 11-digit length.
+
+  educationalAttainment     VARCHAR        e.g. "College Graduate"
+  occupation                VARCHAR        e.g. "Housewife", "Student"
+
+  SPOUSE INFORMATION (optional — for married patients)
+  ─────────────────────────────────────────────────────
+  spouseName                VARCHAR        Full name of spouse
+  spouseOccupation          VARCHAR        Spouse's occupation
+
+  spouseContact             VARCHAR(11)    ⚠ Same validation as
+                                           contactNumber — digits only,
+                                           exactly 11 characters.
+
+  ADDRESS
+  ───────
+  address                   VARCHAR        Street / Block / Lot
+  purok                     VARCHAR        Purok name (local sub-area)
+  barangay                  VARCHAR        e.g. "Gov. Paciano Bangoy"
+  city                      VARCHAR        e.g. "Davao City"
+
+  HEALTH PROGRAM
+  ──────────────
+  program                   VARCHAR        "Prenatal Care" |
+                                           "Family Planning" |
+                                           "National Immunization" |
+                                           "National Tuberculosis" |
+                                           "Cardiovascular Disease"
+  familyPlanning            BOOLEAN        Enrolled in family planning
+  vitamins                  BOOLEAN        Currently taking vitamins
+  children                  INTEGER        Number of children
+
+  MEDICAL / CLINICAL INFORMATION
+  ───────────────────────────────
+  coMorbidities             VARCHAR / TEXT ⚠ Now sourced from multi-select
+                                           checkboxes in the UI. Stored as
+                                           a comma-separated string of
+                                           selected conditions, or "None".
+                                           Adult checkbox options:
+                                             Hypertension | Diabetes |
+                                             STI/HIV | Heart Disease |
+                                             Kidney Failure | TB
+                                           Patients ≤ 5 yrs: only
+                                           Allergies & Cancer shown.
+
+  cancer                    VARCHAR        ⚠ NEW FIELD (added with UI
+                                           changes). Dropdown in UI:
+                                           "None" OR free-text string
+                                           (e.g. "Breast Cancer").
+                                           Store "None" when not applicable.
+
+  allergies                 VARCHAR        Dropdown in UI:
+                                           "None" OR free-text string
+                                           (e.g. "Penicillin, Aspirin").
+                                           Store "None" when not applicable.
+
+  maintenanceMedication     TEXT           Current maintenance medications,
+                                           dose & frequency (free text)
+  previousIllnesses         TEXT           Past illnesses / surgeries
+                                           (free text)
+
+  LATEST VITALS
+  ─────────────
+  lastVisit                 DATE           Format: YYYY-MM-DD
+                                           ⚠ UI validates via native date
+                                           picker — stores "2026-02-14",
+                                           NOT "February 14, 2026"
+
+  bloodPressure             VARCHAR        ⚠ Format enforced: "X/Y mmHg"
+                                           UI shows editable numeric part
+                                           + locked "mmHg" suffix badge.
+                                           e.g. "120/80 mmHg"
+
+  weight                    VARCHAR        ⚠ Format enforced: "X kg"
+                                           UI shows editable number + locked
+                                           "kg" suffix badge.
+                                           e.g. "58 kg"
+
+  height                    VARCHAR        ⚠ Format enforced: "X cm"
+                                           UI shows editable number + locked
+                                           "cm" suffix badge.
+                                           e.g. "155 cm"
+
+  NEWBORN VACCINES (at birth)
+  ───────────────────────────
+  bcgVaccine                VARCHAR        "YES" | "NO" | "N/A"
+  hepBVaccine               VARCHAR        "YES" | "NO" | "N/A"
+  vitaminK                  VARCHAR        "YES" | "NO" | "N/A"
+
+  FAMILY HISTORY
+  ──────────────
+  familyHistoryConditions   TEXT / JSON    Array of conditions:
+                                           "Asthma/Allergies" |
+                                           "Birth Defects" | "Cancer" |
+                                           "Dementia" | "Diabetes" |
+                                           "Hypertension" | "Lung Disease" |
+                                           "Mental Illness"
+  familyHistoryOther        TEXT           Free-text other conditions
+  familyHistoryMother       VARCHAR        "YES" | "NO" | "N/A"
+
+  ARCHIVE STATUS
+  ──────────────
+  isArchived                BOOLEAN        Whether patient is archived
+  archivedAt                TIMESTAMP      When the patient was archived
+
+
+════════════════════════════════════════════════════════════
+  TABLE 2: personal_social_history
+  (Lifestyle data — one row per patient)
+════════════════════════════════════════════════════════════
+
+  patientId                 INTEGER        FK → patients.id
+  eatsHealthyDiet           BOOLEAN
+  adequatePhysicalActivity  BOOLEAN
+  sufficientRestSleep       BOOLEAN
+  normalGrowthDevelopment   BOOLEAN
+  multiplePartners          BOOLEAN
+  smokesTobacco             BOOLEAN
+  tobaccoPacksPerYear       INTEGER        Packs smoked per year
+  drinksAlcohol             BOOLEAN
+  alcoholBottlesPerYear     INTEGER        Bottles consumed per year
+  takesIllegalDrugs         BOOLEAN
+  illegalDrugsSpecify       TEXT           Drug name(s) if yes
+
+
+════════════════════════════════════════════════════════════
+  TABLE 3: physical_exam
+  (Physical examination findings — one row per exam section
+   per patient. Can also be stored as JSON columns.)
+════════════════════════════════════════════════════════════
+
+  patientId                 INTEGER        FK → patients.id
+  examDate                  DATE           Date of the examination
+
+  -- Each body system has 3 sub-fields:
+  -- essentiallyNormal (BOOLEAN), findings (TEXT/JSON array), othersSpecify (TEXT)
+
+  sheent_normal             BOOLEAN
+  sheent_findings           TEXT / JSON    e.g. ["Nasal Congestion"]
+  sheent_others             TEXT
+
+  chestBreastLungs_normal   BOOLEAN
+  chestBreastLungs_findings TEXT / JSON    e.g. ["Crackles/Rales/Wheeze"]
+  chestBreastLungs_others   TEXT
+
+  heart_normal              BOOLEAN
+  heart_findings            TEXT / JSON    e.g. ["Chest Pain", "Orthopnea"]
+  heart_others              TEXT
+
+  abdomen_normal            BOOLEAN
+  abdomen_findings          TEXT / JSON    e.g. ["Nausea", "Constipation"]
+  abdomen_others            TEXT
+
+  genitourinary_normal      BOOLEAN
+  genitourinary_findings    TEXT / JSON    e.g. ["Frequency/Urgency"]
+  genitourinary_others      TEXT
+
+  extremities_normal        BOOLEAN
+  extremities_findings      TEXT / JSON    e.g. ["Lymphedema"]
+  extremities_others        TEXT
+
+  neurological_normal       BOOLEAN
+  neurological_findings     TEXT / JSON    e.g. ["Numbness/Weakness"]
+  neurological_others       TEXT
+
+  -- Full list of known finding options (for checkboxes in UI):
+  --   SHEENT:        Pallor/Cyanosis, Lymphadenopathy, Nasal Congestion,
+  --                  Poor Vision, Sunken Eyeball, Icteric Sclerae,
+  --                  Pale Conjunctivae, Deafness, Ear Discharges,
+  --                  Dental Caries, Neck Mass, Poor Skin Turgor,
+  --                  Sunken Fontanelle
+  --   Chest/Lungs:   Asymmetrical Expansion, Chest Retraction,
+  --                  Breast Discharge/Lump, Crackles/Rales/Wheeze
+  --   Heart:         Precordial Bulge, Chest Pain, Orthopnea
+  --   Abdomen:       Bloody Stool, Nausea, Constipation, Anorexia
+  --   Genitourinary: Frequency/Urgency, Dysuria/Polyuria,
+  --                  Abnormal Discharge, Bloody Discharge
+  --   Extremities:   Nail Clubbing, Back/Joint Pain, Joint Swelling,
+  --                  Lymphedema
+  --   Neurological:  Abnormal Gait, Tremor/Seizure, Numbness/Weakness,
+  --                  Anxiety/Depression
+
+
+════════════════════════════════════════════════════════════
+  TABLE 4: maternal_records
+  (Only for female patients enrolled in Prenatal Care or
+   Family Planning — one row per patient per pregnancy)
+════════════════════════════════════════════════════════════
+
+  patientId                 INTEGER        FK → patients.id
+
+  OBSTETRICAL HISTORY
+  ───────────────────
+  gravida                   INTEGER        Total pregnancies (G)
+  para                      INTEGER        Deliveries (P)
+  fullTerm                  INTEGER        Full-term deliveries
+  preterm                   INTEGER        Pre-term deliveries
+  abortion                  INTEGER        Abortions / miscarriages
+  living                    INTEGER        Living children
+
+  MENSTRUAL HISTORY
+  ─────────────────
+  menarcheAge               INTEGER        Age at first menstruation
+  menstrualCycle            VARCHAR        "Regular" | "Irregular"
+  menstrualFlowDays         INTEGER        Duration of flow in days
+  coitarcheAge              INTEGER        Age at first sexual intercourse
+
+  FAMILY PLANNING
+  ───────────────
+  currentFpMethod           VARCHAR        e.g. "Oral Contraceptive Pills",
+                                           "Injectable Contraceptive"
+
+  SCREENING TESTS
+  ───────────────
+  papSmear                  BOOLEAN        Done?
+  papSmearDate              DATE
+  papSmearResult            VARCHAR        e.g. "Normal / Negative"
+  via                       BOOLEAN        Visual Inspection done?
+  viaDate                   DATE
+  viaResult                 VARCHAR        e.g. "Negative"
+  historyOfSti              BOOLEAN        STI history?
+  stiDate                   DATE
+  stiResult                 VARCHAR
+
+  RISK & REFERENCE
+  ────────────────
+  riskCode                  VARCHAR        e.g. "Low Risk", "Moderate Risk"
+  motherBabyBook            BOOLEAN        Has Mother-Baby book?
+
+  CURRENT PREGNANCY
+  ─────────────────
+  lmp                       DATE           Last Menstrual Period
+  edd                       DATE           Expected Date of Delivery
+  planToDeliverAt           VARCHAR        Facility name
+  ageOfGestation            VARCHAR        e.g. "12 weeks"
+  accompanyingPerson        VARCHAR        Name of birthing companion
+
+  DENTAL & PHYSICIAN VISITS
+  ──────────────────────────
+  seenByDentist             BOOLEAN
+  dentistDate               DATE
+  dentistVisit1             INTEGER        Visits — 1st trimester
+  dentistVisit2             INTEGER        Visits — 2nd trimester
+  dentistVisit3             INTEGER        Visits — 3rd trimester
+  seenByPhysician           BOOLEAN
+  physicianDate             DATE
+  physicianVisit1           INTEGER
+  physicianVisit2           INTEGER
+  physicianVisit3           INTEGER
+
+  TETANUS TOXOID (TT) VACCINATIONS
+  ─────────────────────────────────
+  ⚠ Format change: UI now uses Month + Year dropdown selectors (min 2010).
+    Stored as "Month YYYY" string, e.g. "March 2021". Empty string if not set.
+
+  tt1                       VARCHAR        e.g. "March 2021" or ""
+  tt2                       VARCHAR        e.g. "April 2021" or ""
+  tt3                       VARCHAR        e.g. "March 2022" or ""
+  tt4                       VARCHAR        e.g. "March 2023" or ""
+  tt5                       VARCHAR        e.g. "" (if not yet given)
+
+  SUPPLEMENTS
+  ───────────
+  iodizedSalt               BOOLEAN        Using iodized salt?
+  ironSupplement            BOOLEAN        Taking iron supplement?
+
+
+════════════════════════════════════════════════════════════
+  TABLE 5: logbook_entries
+  (Audit trail of all staff actions on patient records)
+════════════════════════════════════════════════════════════
+
+  id                        INTEGER        Primary key, auto-increment
+  staffUsername             VARCHAR        FK / ref → staff_accounts.username
+  action                    VARCHAR        "Add Record"    — new patient registered
+                                           "Edit Record"   — patient record updated
+                                           "Delete Record" — hard-deleted
+                                           "Archive"       — moved to archive
+                                           "Restore"       — restored from archive
+  patientName               VARCHAR        Full name snapshot at time of action
+  patientId                 INTEGER        FK → patients.id (optional reference)
+  timestamp                 TIMESTAMP      Date and time of action
+                                           (auto-set by addLogbookEntry() service)
+
+  ⚠ API SERVICE NOTE:
+    addLogbookEntry() was added to logbook.service.ts.
+    It must be called manually from components after every:
+      - createPatient()   → action: "Add Record"
+      - updatePatient()   → action: "Edit Record"
+      - deletePatient()   → action: "Delete Record"
+      - archivePatient()  → action: "Archive"
+      - restorePatient()  → action: "Restore"
+
+
+════════════════════════════════════════════════════════════
+  TABLE 6: archive_entries
+  (Records of patients who were archived / discharged)
+════════════════════════════════════════════════════════════
+
+  id                        INTEGER        Primary key, auto-increment
+  patientId                 INTEGER        FK → patients.id
+  lastName                  VARCHAR        Name snapshot at archival time
+  firstName                 VARCHAR
+  middleInitial             VARCHAR(2)
+  startDatetime             TIMESTAMP      When care/program started
+  endDatetime               TIMESTAMP      When the patient was archived
+                                           (auto-set by archivePatient() service)
+
+  ⚠ API SERVICE NOTE:
+    archivePatient() and restorePatient() were added to archive.service.ts.
+
+
+════════════════════════════════════════════════════════════
+  TABLE 7: staff_accounts
+  (Health center staff / user accounts)
+════════════════════════════════════════════════════════════
+
+  id                        VARCHAR / UUID Primary key
+  username                  VARCHAR        Unique login identifier
+  fullName                  VARCHAR        Display name
+  email                     VARCHAR        e.g. "m.santos@healthcenter.gov.ph"
+  passwordHash              VARCHAR        Bcrypt / Argon2 hashed password
+                                           (NEVER store plain text)
+  role                      VARCHAR        "Health Staff" | "Admin" |
+                                           "Nurse" | "Midwife"
+  createdAt                 TIMESTAMP
+  updatedAt                 TIMESTAMP
+
+
+════════════════════════════════════════════════════════════
+  API SERVICES — CHANGE SUMMARY
+  (/src/api/ folder — what was updated)
+════════════════════════════════════════════════════════════
+
+  patients.service.ts
+  ───────────────────
+  ✓ Header comment updated — documents all new field formats:
+      birthday / lastVisit → YYYY-MM-DD
+      contactNumber / spouseContact → 11 digits only
+      bloodPressure → "X/Y mmHg" (enforced)
+      weight → "X kg" (enforced)
+      height → "X cm" (enforced)
+      coMorbidities → comma-joined checkbox string or "None"
+      cancer → NEW field ("None" | free-text)
+      tt1–tt5 → "Month YYYY" or ""
+  ✓ updatePatient() — already handles Patient type (cancer auto-included)
+  ✓ deletePatient() — NEW function added (hard delete, DELETE /patients/:id)
+
+  logbook.service.ts
+  ──────────────────
+  ✓ Header updated — documents all 5 action values
+  ✓ addLogbookEntry() — NEW function added (POST /logbook)
+      Accepts: staffUsername, action, patientName, patientId?
+      Auto-generates: id, timestamp
+
+  archive.service.ts
+  ──────────────────
+  ✓ Header updated — documents all 3 endpoints
+  ✓ archivePatient() — NEW function added (POST /archive)
+      Accepts: patientId, lastName, firstName, middleInitial, startDatetime
+      Auto-generates: id, endDatetime
+  ✓ restorePatient() — NEW function added (DELETE /archive/:id)
+
+  auth.service.ts     — No changes needed
+  staff.service.ts    — No changes needed
+  config.ts           — No changes needed
+
+
+════════════════════════════════════════════════════════════
+  SUMMARY — TABLE COUNT
+════════════════════════════════════════════════════════════
+
+  Table 1: patients                — 42 fields  (+2: cancer, isArchived/archivedAt)
+  Table 2: personal_social_history — 11 fields
+  Table 3: physical_exam           — 21 fields  (7 body systems × 3)
+  Table 4: maternal_records        — 34 fields
+  Table 5: logbook_entries         —  6 fields  (+1: patientId reference)
+  Table 6: archive_entries         —  7 fields
+  Table 7: staff_accounts          —  8 fields
+
+  TOTAL: 7 tables, ~129 fields
+
+  ⚠ FIELDS WITH CHANGED FORMAT (from previous version):
+    patients.birthday        — now YYYY-MM-DD  (was "Month DD, YYYY")
+    patients.lastVisit       — now YYYY-MM-DD  (was "Month DD, YYYY")
+    patients.contactNumber   — now digits only, 11 chars (was "XXXX-XXX-XXXX")
+    patients.spouseContact   — now digits only, 11 chars (was "XXXX-XXX-XXXX")
+    patients.bloodPressure   — enforced "X/Y mmHg" (unit always appended)
+    patients.weight          — enforced "X kg"       (unit always appended)
+    patients.height          — enforced "X cm"       (unit always appended)
+    patients.coMorbidities   — now checkbox-driven comma string or "None"
+    maternal.tt1–tt5         — now "Month YYYY" from dropdown (min year 2010)
+
+  ⚠ NEW FIELDS (added in this update):
+    patients.cancer          — "None" | free-text (e.g. "Breast Cancer")
+============================================================
