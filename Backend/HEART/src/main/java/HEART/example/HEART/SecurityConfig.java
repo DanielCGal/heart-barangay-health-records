@@ -34,7 +34,8 @@ public class SecurityConfig {
         // ✅ explicit origins (NO "*")
         cfg.setAllowedOrigins(List.of(
             "http://localhost:5173",
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "https://heart-barangay-health-records-frontend.onrender.com"
         ));
 
         cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
